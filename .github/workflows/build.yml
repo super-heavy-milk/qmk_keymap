@@ -1,5 +1,5 @@
 ---
-name: Build QMK firmware
+name: Build Iris Firmware
 on: [push, workflow_dispatch]
 jobs:
   build:
@@ -8,27 +8,35 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        file:
-          - super-heavy-milk.json
+        # this let's me use the same keymap with multiple board versions
+        version: [rev5, rev7]
     steps:
       - name: Disable git safe directory checks
         run: git config --global --add safe.directory '*'
+
       - name: Checkout QMK
         uses: actions/checkout@v4
         with:
           repository: qmk/qmk_firmware
           submodules: recursive
+
       - name: Checkout userspace
         uses: actions/checkout@v3
         with:
           path: users/${{ github.actor }}
+
       - name: Build firmware
-        run: qmk compile "users/${{ github.actor }}/${{ matrix.file }}"
+        run: qmk compile -kb keebio/iris/${{ matrix.version }} "users/${{ github.actor }}/iris-keymap.json"
+
+      - name: Create a timestamp for the build 
+        shell: bash
+        run: echo "TIMESTAMP=$(date +'%Y-%m-%dT%H%M%S')" >> $GITHUB_ENV
+
       - name: Archive firmware
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: ${{ matrix.file }}_${{ github.actor }}
+          name: iris__${{ matrix.version }}__${{ env.TIMESTAMP }}
           path: |
             *.hex
             *.bin
