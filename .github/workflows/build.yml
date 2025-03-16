@@ -26,7 +26,7 @@ jobs:
           path: users/${{ github.actor }}
 
       - name: Build firmware
-        run: qmk compile -kb keebio/iris/${{ matrix.version }} -km "users/${{ github.actor }}/iris-keymap.json"
+        run: qmk compile --keyboard keebio/iris/${{ matrix.version }} --keymap users/${{ github.actor }}/iris-keymap
 
       - name: Create a timestamp for the build 
         shell: bash
