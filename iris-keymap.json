@@ -1,7 +1,5 @@
 {
     "config": { "features": {"tri_layer": true} },
-    "keyboard": "keebio/iris",
-    "keymap": "default",
     "layout": "LAYOUT",
     "layers": [
       [
